@@ -6,6 +6,7 @@ use std::fs;
 use clap::Parser;
 use clap::Subcommand;
 use git::command::cat_file;
+use git::command::init;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -31,11 +32,7 @@ fn main() -> anyhow::Result<()> {
 
     match args.command {
         Command::Init => {
-            fs::create_dir(".git").unwrap();
-            fs::create_dir(".git/objects").unwrap();
-            fs::create_dir(".git/refs").unwrap();
-            fs::write(".git/HEAD", "ref: refs/heads/main\n").unwrap();
-            println!("Initialized git directory");
+            init()?;
         }
         Command::CatFile {
             object_type,

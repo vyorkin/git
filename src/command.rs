@@ -8,6 +8,16 @@ use flate2::read::ZlibDecoder;
 
 use crate::error::GitError;
 
+pub fn init() -> Result<(), GitError> {
+    fs::create_dir(".git").unwrap();
+    fs::create_dir(".git/objects").unwrap();
+    fs::create_dir(".git/refs").unwrap();
+    fs::write(".git/HEAD", "ref: refs/heads/main\n").unwrap();
+    println!("Initialized git directory");
+
+    Ok(())
+}
+
 pub fn cat_file(
     _object_type: &str,
     object_hash: &str,
