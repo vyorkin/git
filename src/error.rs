@@ -11,8 +11,8 @@ pub enum GitError {
     #[error("Invalid .git/objects file header")]
     InvalidHeader,
 
-    #[error("Invalid size of .git/objects file")]
-    InvalidContentSize,
+    #[error("Invalid size of .git/objects file (expected: {expected:?}, actual: {actual:?})")]
+    InvalidContentSize { expected: usize, actual: usize },
 
     #[error("Invalid object kind `{0}`")]
     InvalidObjectKind(String),

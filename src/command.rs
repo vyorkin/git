@@ -1,12 +1,12 @@
 use std::{
     ffi::CStr,
     fs,
-    io::{BufRead, BufReader, Read, Write},
+    io::{BufRead, BufReader},
 };
 
 use flate2::read::ZlibDecoder;
 
-use crate::error::GitError;
+use crate::{error::GitError, limit_reader::LimitReader};
 
 pub fn init() -> Result<(), GitError> {
     fs::create_dir(".git").unwrap();
@@ -47,23 +47,21 @@ pub fn cat_file(
         return Err(GitError::InvalidObjectKind(kind.into()));
     }
 
-    let size = size.parse::<usize>()?;
-
-    buf.clear();
-    buf.resize(size, 0);
-
-    buf_reader.read_exact(&mut buf)?;
-
-    let bytes_read = buf_reader.read(&mut [0])?;
-    if bytes_read != 0 {
-        return Err(GitError::InvalidContentSize);
-    }
-
     // 4. Print the content to stdout
+
     let stdout = std::io::stdout();
     let mut stdout = stdout.lock();
 
-    stdout.write_all(&buf)?;
+    let size = size.parse::<usize>()?;
+    let mut limit_reader = LimitReader::new(buf_reader, size);
+
+    let bytes_read = std::io::copy(&mut limit_reader, &mut stdout)? as usize;
+    if bytes_read != size {
+        return Err(GitError::InvalidContentSize {
+            expected: size,
+            actual: bytes_read,
+        });
+    }
 
     Ok(())
 }
