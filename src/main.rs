@@ -1,4 +1,5 @@
 use clap::Parser;
+use git::command::hash_object;
 #[allow(unused_imports)]
 use std::env;
 #[allow(unused_imports)]
@@ -22,6 +23,9 @@ fn main() -> anyhow::Result<()> {
             pretty_print,
         } => {
             cat_file(&object_type, &object_hash, pretty_print)?;
+        }
+        Command::HashObject { file_path, write } => {
+            hash_object(file_path, write)?;
         }
     }
     Ok(())

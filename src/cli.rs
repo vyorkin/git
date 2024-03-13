@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 use clap::Subcommand;
 
@@ -17,5 +19,10 @@ pub enum Command {
         object_hash: String,
         #[clap(short = 'p')]
         pretty_print: bool,
+    },
+    HashObject {
+        file_path: PathBuf,
+        #[clap(short = 'w')]
+        write: bool,
     },
 }
