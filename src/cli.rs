@@ -25,4 +25,7 @@ pub enum Command {
         #[clap(short = 'w')]
         write: bool,
     },
+    LsTree {
+        name_only: bool,
+    },
 }

@@ -1,31 +1,27 @@
 use clap::Parser;
-use git::command::hash_object;
-#[allow(unused_imports)]
-use std::env;
-#[allow(unused_imports)]
-use std::fs;
-
 use git::cli::Args;
 use git::cli::Command;
-use git::command::cat_file;
-use git::command::init;
+use git::command;
 
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     match args.command {
         Command::Init => {
-            init()?;
+            command::init::run()?;
         }
         Command::CatFile {
             object_type,
             object_hash,
             pretty_print,
         } => {
-            cat_file(&object_type, &object_hash, pretty_print)?;
+            command::cat_file::run(&object_type, &object_hash, pretty_print)?;
         }
         Command::HashObject { file_path, write } => {
-            hash_object(file_path, write)?;
+            command::hash_object::run(file_path, write)?;
+        }
+        Command::LsTree { name_only } => {
+            command::ls_tree::run(name_only)?;
         }
     }
     Ok(())
